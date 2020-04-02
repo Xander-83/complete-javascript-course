@@ -1,11 +1,20 @@
 ///////////////////////////////////////
 // Lecture: Hoisting
 
+calAge(1990)
+
+function calAge(year) {
+    console.log(2020 - year)
+}
+
+//calAge(1990)
 
 
+let calRetire = (year) => {
+    console.log(65 - (2020 - year))
+}
 
-
-
+calRetire(1990)
 
 
 
@@ -66,12 +75,3 @@ function third() {
 
 ///////////////////////////////////////
 // Lecture: The this keyword
-
-
-
-
-
-
-
-
-
