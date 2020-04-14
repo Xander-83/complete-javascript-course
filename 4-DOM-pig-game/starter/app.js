@@ -10,55 +10,78 @@ GAME RULES:
 */
 
 let p0 = {
-    name: 'Player 1',
     score: parseInt(document.getElementById('score-0').innerText),
 };
 let p1 = {
-    name: 'Player 2',
     score: parseInt(document.getElementById('score-1').innerText),
 };
-
-const GOAL = 20;
+let randomNum, randomNum2, diceCount, goal;
 let activePlayer = 0;
 let notActive = 1;
-let randomNum;
 let curScore = parseInt(document.getElementById(`current-${activePlayer}`).innerText)
 
 //start new game
 document.getElementById('btn-new').onclick = function startNewGame() {
-    p0.name = prompt('What is your name ?');
-    p1.name = prompt('What is your name ?');
-    document.getElementById('name-0').innerText = p0.name;
-    document.getElementById('name-1').innerText = p1.name;
+    document.querySelector('.dice').style.visibility = 'hidden';
+    document.querySelector('.dice2').style.visibility = 'hidden';
     activePlayer = 0;
+    notActive = 1;
     randomNum = 0;
+    randomNum2 = 0;
     p0.score = (document.getElementById('score-0').innerText = 0);
     p1.score = (document.getElementById('score-1').innerText = 0);
     document.getElementById('current-0').innerText = 0;
     document.getElementById('current-1').innerText = 0;
-    document.querySelector('#name-0').classList.remove('winner');
-    document.querySelector('#name-1').classList.remove('winner');
+    document.querySelector('.player-0-panel').classList.remove('winner');
+    document.querySelector('.player-1-panel').classList.remove('winner');
+    document.querySelector(`#name-1`).classList.remove('winner')
+    document.querySelector(`.player-1-panel`).classList.remove('active')
+    document.querySelector(`.player-0-panel`).classList.remove('active')
+    document.querySelector(`.player-0-panel`).classList.add('active')
+    document.getElementById(`current-0`).innerText = 0;
+    document.getElementById('name-0').innerText = prompt('Player 1, what is your name ?');
+    document.getElementById('name-1').innerText = prompt('Player 2, what is your name ?');
+    goal = parseInt(prompt('What score do you want to set as the goal?'));
+    diceCount = parseInt(prompt('Do you want to play with 1 or 2 dice?'));
 
 };
 
 //roll dice
+
+
 document.getElementById('btn-roll').onclick = function rollDice() {
-    diceFlip()
-    document.querySelector('.dice').src = `dice-${randomNum}.png`
-    console.log(randomNum)
-    winnerTest(activePlayer, notActive)
+
+    if (diceCount === 1) {
+        document.querySelector('.dice2').style.visibility = 'hidden';
+        document.querySelector('.dice').style.visibility = 'visible';
+        diceFlip()
+        document.querySelector('.dice').src = `dice-${randomNum}.png`
+        console.log(randomNum)
+        winnerTest(activePlayer, notActive)
+    } else {
+        document.querySelector('.dice').style.visibility = 'visible';
+        document.querySelector('.dice2').style.visibility = 'visible';
+        diceFlip()
+        document.querySelector('.dice').src = `dice-${randomNum}.png`
+        document.querySelector('.dice2').src = `dice-${randomNum2}.png`
+        console.log('Dice 1: ' + randomNum);
+        console.log('Dice 2: ' + randomNum2);
+        winnerTest(activePlayer, notActive);
+    }
 }
+
 
 
 // hold button
 document.getElementById('btn-hold').onclick = function saveScore() {
     document.getElementById(`score-${activePlayer}`).innerText = (parseInt(document.getElementById(`current-${activePlayer}`).innerText) + parseInt(document.getElementById(`score-${activePlayer}`).innerText));
-    winnerTest(activePlayer, notActive)
-    if (document.getElementById(`score-${activePlayer}`).innerText >= GOAL) {
+    //winnerTest(activePlayer, notActive)
+    if (document.getElementById(`score-${activePlayer}`).innerText >= goal) {
         console.log(document.getElementById(`name-${activePlayer}`).innerText + ' is the winner!')
         document.getElementById(`name-${activePlayer}`).innerText = 'Winner!!';
-        document.querySelector(`#name-${notActive}`).classList.remove('active');
+        document.querySelector(`.player-${notActive}-panel`).classList.remove('active')
         document.querySelector(`#name-${activePlayer}`).classList.add('winner')
+        return
     }
     curScore = (document.getElementById(`current-${activePlayer}`).innerText = 0);
     switchActive()
@@ -68,18 +91,54 @@ document.getElementById('btn-hold').onclick = function saveScore() {
 
 //tests for winner
 function winnerTest(win, lose) {
-    if (curScore >= GOAL) {
-        document.querySelector('player.-' + win + '-panel').classList.add('winner')
-        document.querySelector('player.-' + lose + '-panel').classList.remove('active');
+    console.log(diceCount)
+    if (curScore >= goal) {
+        document.querySelector(`#name-${activePlayer}`).classList.remove('active')
+        document.querySelector(`.player-${win}-panel`).classList.add('active')
+        document.querySelector(`#name-${notActive}`).classList.remove('active');
+        document.querySelector(`#name-${activePlayer}`).classList.add('winner')
         console.log(document.getElementById(`name-${win}`).innerText + ' is the winner!')
-    } else if (randomNum === 1) {
-        console.log(document.getElementById(`name-${win}`).innerText + ('\'s round is over!'))
-        curScore = (document.getElementById(`current-${win}`).innerText = 0);
-        switchActive()
+    }
+
+    if (diceCount === 2) {
+        if (randomNum === 1 || randomNum2 === 1) {
+            console.log(document.getElementById(`name-${win}`).innerText + ('\'s round is over!'))
+            curScore = (document.getElementById(`current-${win}`).innerText = 0);
+            switchActive()
+        } else {
+            document.getElementById(`current-${win}`).innerText = (parseInt(document.getElementById(`current-${win}`).innerText) + randomNum + randomNum2);
+            curScore = document.getElementById(`current-${win}`).innerText
+            console.log('current score tally' + curScore)
+            if (curScore >= goal) {
+
+                console.log(document.getElementById(`name-${win}`).innerText + ' is the winner!')
+                document.getElementById(`name-${win}`).innerText = 'Winner!!';
+                document.querySelector(`#name-${win}`).classList.add('winner')
+                document.querySelector('player-' + lose + '-panel').classList.remove('active');
+                document.querySelector(`#name-${notActive}`).classList.remove('active');
+            }
+        }
+    } else if (diceCount === 1) {
+        if (randomNum === 1) {
+            console.log(document.getElementById(`name-${win}`).innerText + ('\'s round is over!'))
+            curScore = (document.getElementById(`current-${win}`).innerText = 0);
+            switchActive()
+        } else {
+            document.getElementById(`current-${win}`).innerText = (parseInt(document.getElementById(`current-${win}`).innerText) + randomNum);
+            curScore = document.getElementById(`current-${win}`).innerText
+            if (curScore >= goal) {
+                console.log(document.getElementById(`name-${win}`).innerText + ' is the winner!')
+                document.getElementById(`name-${win}`).innerText = 'Winner!!';
+                document.querySelector(`#name-${win}`).classList.add('winner')
+                document.querySelector('player.-' + lose + '-panel').classList.remove('active');
+                document.querySelector(`#name-${notActive}`).classList.remove('active');
+            }
+        }
+
     } else if (randomNum > 1) {
         document.getElementById(`current-${win}`).innerText = (parseInt(document.getElementById(`current-${win}`).innerText) + randomNum);
         curScore = document.getElementById(`current-${win}`).innerText
-        if (curScore >= GOAL) {
+        if (curScore >= goal) {
             console.log(document.getElementById(`name-${win}`).innerText + ' is the winner!')
             document.getElementById(`name-${win}`).innerText = 'Winner!!';
             document.querySelector(`#name-${win}`).classList.add('winner')
@@ -92,7 +151,10 @@ function winnerTest(win, lose) {
 
 
 
+
 function switchActive() {
+    document.querySelector(`#name-${notActive}`).classList.remove('active')
+    document.querySelector(`#name-${activePlayer}`).classList.remove('active')
     if (activePlayer === 0) {
         activePlayer = 1;
         notActive = 0;
@@ -108,5 +170,7 @@ function switchActive() {
 
 function diceFlip() {
     randomNum = Math.floor(Math.random() * 6) + 1
+    randomNum2 = Math.floor(Math.random() * 6) + 1
     return randomNum
+    return randomNum2
 }
