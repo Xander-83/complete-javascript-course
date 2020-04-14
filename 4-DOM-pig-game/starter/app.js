@@ -9,108 +9,96 @@ GAME RULES:
 
 */
 
-let p1 = {
+let p0 = {
     name: 'Player 1',
-    active: 0,
     score: parseInt(document.getElementById('score-0').innerText),
-    curScore: parseInt(document.getElementById('current-0').innerText),
 };
-let p2 = {
+let p1 = {
     name: 'Player 2',
-    active: 1,
     score: parseInt(document.getElementById('score-1').innerText),
-    curScore: parseInt(document.getElementById('current-1').innerText),
 };
 
 const GOAL = 20;
 let activePlayer = 0;
+let notActive = 1;
 let randomNum;
+let curScore = parseInt(document.getElementById(`current-${activePlayer}`).innerText)
 
+//start new game
 document.getElementById('btn-new').onclick = function startNewGame() {
-    p1.active = 0;
-    p2.active = 1;
+    p0.name = prompt('What is your name ?');
+    p1.name = prompt('What is your name ?');
+    document.getElementById('name-0').innerText = p0.name;
+    document.getElementById('name-1').innerText = p1.name;
+    activePlayer = 0;
     randomNum = 0;
-    p1.score = (document.getElementById('score-0').innerText = 0);
-    p2.score = (document.getElementById('score-1').innerText = 0);
-    p1.curScore = (document.getElementById('current-0').innerText = 0);
-    p2.curScore = (document.getElementById('current-1').innerText = 0);
-    document.querySelector('#name-0').classList.remove('winner')
-    document.querySelector('#name-1').classList.remove('winner')
+    p0.score = (document.getElementById('score-0').innerText = 0);
+    p1.score = (document.getElementById('score-1').innerText = 0);
+    document.getElementById('current-0').innerText = 0;
+    document.getElementById('current-1').innerText = 0;
+    document.querySelector('#name-0').classList.remove('winner');
+    document.querySelector('#name-1').classList.remove('winner');
 
 };
 
+//roll dice
 document.getElementById('btn-roll').onclick = function rollDice() {
     diceFlip()
     document.querySelector('.dice').src = `dice-${randomNum}.png`
     console.log(randomNum)
-    if (activePlayer === 0) {
-        if (p1.curScore >= GOAL) {
-            document.querySelector('#name-0').classList.add('winner')
-            console.log(p1.name + ' is the winner!')
-        } else if (randomNum === 1) {
-            console.log(p1.name + ('\'s round is over!'))
-            p1.curScore = (document.getElementById('current-0').innerText = 0);
-            switchActive()
-        } else if (randomNum > 1) {
-            document.getElementById('current-0').innerText = (parseInt(document.getElementById('current-0').innerText) + randomNum);
-            p1.curScore = document.getElementById('current-0').innerText
-            if (p1.curScore >= GOAL) {
-                console.log(p1.name + ' is the winner!')
-                document.querySelector('#name-0').classList.add('winner')
-            }
-        }
-    } else if (activePlayer === 1) {
-        if (p2.curScore >= GOAL) {
-            document.querySelector('#name-1').classList.add('winner')
-            console.log(p2.name + ' is the winner!')
-        } else if (randomNum === 1) {
-            console.log(p2.name + ('\'s round is over!'))
-            p2.curScore = (document.getElementById('current-1').innerText = 0);
-            switchActive()
-        } else if (randomNum > 1) {
-            document.getElementById('current-1').innerText = (parseInt(document.getElementById('current-1').innerText) + randomNum);
-            p2.curScore = document.getElementById('current-1').innerText
-            if (p1.curScore >= GOAL) {
-                console.log(p2.name + ' is the winner!')
-                document.querySelector('#name-1').classList.add('winner')
-            }
-        }
-
-    }
+    winnerTest(activePlayer, notActive)
 }
 
 
-
+// hold button
 document.getElementById('btn-hold').onclick = function saveScore() {
-    if (activePlayer === 0) {
-        document.getElementById('score-0').innerText = (parseInt(document.getElementById('current-0').innerText) + parseInt(document.getElementById('score-0').innerText));
-        if (document.getElementById('score-0').innerText >= GOAL) {
-            console.log(p1.name + ' is the winner!')
-            document.querySelector('#name-0').classList.add('winner')
-        }
-        p1.curScore = (document.getElementById('current-0').innerText = 0);
-        switchActive()
-    } else {
-        if (activePlayer === 1) {
-            document.getElementById('score-1').innerText = (parseInt(document.getElementById('current-1').innerText) + parseInt(document.getElementById('score-1').innerText));
-            if (document.getElementById('score-1').innerText >= GOAL) {
-                console.log(p2.name + ' is the winner!')
-                document.querySelector('#name-1').classList.add('winner')
-            }
-            p2.curScore = (document.getElementById('current-1').innerText = 0);
-            switchActive()
-        }
-
+    document.getElementById(`score-${activePlayer}`).innerText = (parseInt(document.getElementById(`current-${activePlayer}`).innerText) + parseInt(document.getElementById(`score-${activePlayer}`).innerText));
+    winnerTest(activePlayer, notActive)
+    if (document.getElementById(`score-${activePlayer}`).innerText >= GOAL) {
+        console.log(document.getElementById(`name-${activePlayer}`).innerText + ' is the winner!')
+        document.querySelector(`#name-${notActive}`).classList.remove('active');
+        document.querySelector(`#name-${activePlayer}`).classList.add('winner')
     }
+    curScore = (document.getElementById(`current-${activePlayer}`).innerText = 0);
+    switchActive()
 }
+
+
+
+//tests for winner
+function winnerTest(win, loose) {
+    if (curScore >= GOAL) {
+        document.querySelector(`#name-${win}`).classList.add('winner')
+        document.querySelector(`#name-${loose}`).classList.remove('active');
+        console.log(document.getElementById(`name-${win}`).innerText + ' is the winner!')
+    } else if (randomNum === 1) {
+        console.log(document.getElementById(`name-${win}`).innerText + ('\'s round is over!'))
+        curScore = (document.getElementById(`current-${win}`).innerText = 0);
+        switchActive()
+    } else if (randomNum > 1) {
+        document.getElementById(`current-${win}`).innerText = (parseInt(document.getElementById(`current-${win}`).innerText) + randomNum);
+        curScore = document.getElementById(`current-${win}`).innerText
+        if (curScore >= GOAL) {
+            console.log(document.getElementById(`name-${win}`).innerText + ' is the winner!')
+            document.querySelector(`#name-${win}`).classList.add('winner')
+            document.querySelector(`#name-${loose}`).classList.remove('active');
+            document.querySelector(`#name-${notActive}`).classList.remove('active');
+        }
+    }
+};
+
+
+
 
 function switchActive() {
     if (activePlayer === 0) {
         activePlayer = 1;
+        notActive = 0;
         document.querySelector('.active').classList.replace('active', 'notActive')
-        document.querySelector('.player-1-panel').classList.add('active')
+        document.querySelector(`.player-${activePlayer}-panel`).classList.add('active')
     } else {
         activePlayer = 0;
+        notActive = 1;
         document.querySelector('.active').classList.remove('active')
         document.querySelector('.notActive').classList.replace('notActive', 'active')
     }
