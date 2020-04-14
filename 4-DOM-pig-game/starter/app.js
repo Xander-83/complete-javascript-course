@@ -56,6 +56,7 @@ document.getElementById('btn-hold').onclick = function saveScore() {
     winnerTest(activePlayer, notActive)
     if (document.getElementById(`score-${activePlayer}`).innerText >= GOAL) {
         console.log(document.getElementById(`name-${activePlayer}`).innerText + ' is the winner!')
+        document.getElementById(`name-${activePlayer}`).innerText = 'Winner!!';
         document.querySelector(`#name-${notActive}`).classList.remove('active');
         document.querySelector(`#name-${activePlayer}`).classList.add('winner')
     }
@@ -66,10 +67,10 @@ document.getElementById('btn-hold').onclick = function saveScore() {
 
 
 //tests for winner
-function winnerTest(win, loose) {
+function winnerTest(win, lose) {
     if (curScore >= GOAL) {
-        document.querySelector(`#name-${win}`).classList.add('winner')
-        document.querySelector(`#name-${loose}`).classList.remove('active');
+        document.querySelector('player.-' + win + '-panel').classList.add('winner')
+        document.querySelector('player.-' + lose + '-panel').classList.remove('active');
         console.log(document.getElementById(`name-${win}`).innerText + ' is the winner!')
     } else if (randomNum === 1) {
         console.log(document.getElementById(`name-${win}`).innerText + ('\'s round is over!'))
@@ -80,8 +81,9 @@ function winnerTest(win, loose) {
         curScore = document.getElementById(`current-${win}`).innerText
         if (curScore >= GOAL) {
             console.log(document.getElementById(`name-${win}`).innerText + ' is the winner!')
+            document.getElementById(`name-${win}`).innerText = 'Winner!!';
             document.querySelector(`#name-${win}`).classList.add('winner')
-            document.querySelector(`#name-${loose}`).classList.remove('active');
+            document.querySelector('player.-' + lose + '-panel').classList.remove('active');
             document.querySelector(`#name-${notActive}`).classList.remove('active');
         }
     }
