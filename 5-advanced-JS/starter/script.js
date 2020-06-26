@@ -202,35 +202,45 @@ for this.
 
     let cheese = new Question('Cheese is good?', (['yes', 'No']), 0)
     let cars = new Question('What\'s my favorite car brand?', ['Mercedes', 'Ferrari', 'Lamborghini', 'Bentley'], 2)
-    let weather = new Question('What\'s for dinner?', ['Pizza', 'Steak', 'Paella'], 1)
+    let dinner = new Question('What\'s for dinner?', ['Pizza', 'Steak', 'Paella'], 1)
 
-    let score = 0
-    let rounds = 0
+    let score = 0;
+    let rounds = 1;
 
-    let randomQuestionPicker = Math.floor(Math.random() * (allQuestionPairs.length));
-    let currentQuestion = allQuestionPairs[randomQuestionPicker]
-    let currentAnswer = currentQuestion.possibles[currentQuestion.answer]
+    let randomQuestionPicker;
+    let currentQuestion = 0;
+    let currentAnswer;
     let playerAnswer;
     let playAgainAnswer;
 
+    let randomInteger = () => {
+        randomQuestionPicker = Math.floor(Math.random() * (allQuestionPairs.length));
 
-    let startRound = () => {
-        if (rounds === 0) {
-            rounds++
+        currentQuestion = allQuestionPairs[randomQuestionPicker];
+        currentAnswer = currentQuestion.possibles[currentQuestion.answer];
+        return randomQuestionPicker;
+    };
+
+
+    let textToShow = () => {
+        randomInteger();
+        console.log(' ');
+        console.log('Welcome To Round: ' + rounds);
+        console.log(' ');
+        console.log('Your question is:');
+        console.log(currentQuestion.ques);
+        console.log(' ')
+        console.log('Possible Answers:')
+        console.log(showPossibles());
+        playerAnswer = parseInt(prompt('Please select the correct answer (just type a number)'));
+        isItCorrect()
+    }
+
+    let startGame = () => {
+        if (rounds === 1) {
             alert('Welcome To The Game, Read the Console for the Questions. Press Okay to Start')
-            console.log(' ')
-            console.log('Your question is:');
-            console.log(currentQuestion.ques);
-            console.log(' ')
-            console.log('Possible Answers:')
-            console.log(showPossibles());
-            playerAnswer = parseInt(prompt('Please select the correct answer (just type a number)'));
-            isItCorrect()
-        } else {
-            playAgainAnswer = parseInt(prompt('Do you want another question Press 0 for YES and 1 for No (just type a number)'));
-            playAgain(playAgainAnswer)
-        }
-        //console.log(rounds)
+            textToShow();
+        };
     };
 
     let showPossibles = () => {
@@ -241,22 +251,14 @@ for this.
     };
 
     let playAgain = (input) => {
+
         if (input === 1) {
-            alert('Thanks for playing your total score was ' + score)
+            alert('Thanks for playing your total score was ' + score);
         } else {
-            console.clear()
-            console.log(' ');
-            console.log('Your next question is:');
-            console.log(currentQuestion.ques);
-            console.log(' ')
-            console.log('Possible Answers:')
-            console.log(showPossibles());
-            playerAnswer = parseInt(prompt('Please select the correct answer (just type a number)'));
-            isItCorrect()
+            console.clear();
+            textToShow();
         }
     };
-
-
 
     let points = (num) => {
         if (num === 1) {
@@ -267,6 +269,7 @@ for this.
         }
         console.log('You\'re current score is: ' + score);
         playAgainAnswer = parseInt(prompt('Do you want another question Press 0 for YES and 1 for No (just type a number)'));
+        rounds++
         playAgain(playAgainAnswer)
     };
 
@@ -280,8 +283,6 @@ for this.
             points(0);
         }
     };
-    startRound();
-
-
+    startGame();
 
 })();
